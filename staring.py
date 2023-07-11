@@ -9,7 +9,12 @@ display_height = 600
 
 black =(0,0,0) #RGB here
 white =(255,255,255)
-red=(255,0,0)#red,yellow bule
+red=(200,0,0)#red,yellow bule
+green =(0,200,0)
+
+bright_red =(255,0,0)
+bright_green =(0,255,0)
+
 
 block_color = (53,115,255)
 
@@ -45,7 +50,7 @@ def text_object(text,font):
 
 
 def message_display(text):
-	largeText = pygame.font.Font("freesansbold.ttf",100)
+	largeText = pygame.font.Font("freesansbol.ttf",100)
 	TextSurf,TextRect = text_object(text,largeText)
 	TextRect.center = ((display_width / 2),(display_height / 2))
 	gameDisplay.blit(TextSurf,TextRect)
@@ -61,6 +66,57 @@ def message_display(text):
 
 def crash():
 	message_display("You Crashed")
+
+def button(msg,x,y,w,h,inactive_color,active_color,action=None):
+	mouse = pygame.mouse.get_pos()
+	click =pygame.mouse.get_pressed()
+
+	#print(mouse)
+	if x + w > mouse[0] >x and y+h >mouse[1] >y:
+		pygame.draw.rect(gameDisplay,active_color,(x,y,w,h))
+		if click[0] == 1 and action != None:
+			action()
+
+
+	else:
+		pygame.draw.rect(gameDisplay,inactive_color,(x,y,w,h))
+	smallText = pygame.font.Font("freesansbold.ttf",20)
+	textSurf, textRect = text_object(msg,smallText)
+	textRect.center= (   (x+(w/2)),(y+(h/2))  )
+	gameDisplay.blit(textSurf,textRect)
+
+def quitgame():
+	pygame.quit()
+	quit()
+
+
+def game_intro():
+	intro = True
+	while intro:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
+		gameDisplay.fill(white)
+		largeText = pygame.font.Font("freesansbold.ttf",100)
+		TextSurf,TextRect = text_object("A little Game",largeText)
+		TextRect.center = ((display_width / 2),(display_height / 2))
+		gameDisplay.blit(TextSurf,TextRect)
+
+		button("Go!",150,450,100,50,green,bright_green,game_loop)
+		button("Quit",550,450,100,50,red,bright_red,quitgame)
+
+
+
+
+
+
+
+
+		pygame.display.update()
+		clock.tick(15)
+
+
 
 
 def game_loop():
@@ -106,7 +162,7 @@ def game_loop():
 	    things(thing_startx,thing_starty,thing_width,thing_height,block_color)
 	    thing_starty += thing_speed
 
-	    
+
 
 
 	    car(x,y)
@@ -131,6 +187,7 @@ def game_loop():
 	    pygame.display.update()
 	    clock.tick(120)
 
+game_intro()
 game_loop()
 pygame.quit()
 quit()
