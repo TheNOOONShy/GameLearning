@@ -19,8 +19,8 @@ bright_green =(0,255,0)
 block_color = (53,115,255)
 
 
-
-
+pause = True
+#crash =True
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('a little game')
@@ -28,6 +28,8 @@ clock = pygame.time.Clock()
 
 
 carImg = pygame.image.load('racecar.png')
+pygame.display.set_icon(carImg)
+
 Imgwidth, Imgheight = carImg.get_size()
 carimage = pygame.transform.scale(carImg, (Imgwidth //3, Imgheight // 3))
 car_width = Imgwidth // 3
@@ -65,7 +67,26 @@ def message_display(text):
 
 
 def crash():
-	message_display("You Crashed")
+	largeText = pygame.font.Font("freesansbold.ttf",100)
+	TextSurf,TextRect = text_object("You Crashed",largeText)
+	TextRect.center = ((display_width / 2),(display_height / 2))
+	gameDisplay.blit(TextSurf,TextRect)
+	
+
+	while True:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
+
+		#gameDisplay.fill(white)
+
+		button("Play Again",150,450,100,50,green,bright_green,game_loop)
+		button("Quit",550,450,100,50,red,bright_red,quitgame)
+
+		pygame.display.update()
+		clock.tick(15)
+
 
 def button(msg,x,y,w,h,inactive_color,active_color,action=None):
 	mouse = pygame.mouse.get_pos()
@@ -89,6 +110,33 @@ def quitgame():
 	pygame.quit()
 	quit()
 
+def unpause():
+	global pause
+	pause = False
+
+
+
+def paused():
+	largeText = pygame.font.Font("freesansbold.ttf",100)
+	TextSurf,TextRect = text_object("paused",largeText)
+	TextRect.center = ((display_width / 2),(display_height / 2))
+	gameDisplay.blit(TextSurf,TextRect)
+	
+
+	while pause:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
+
+		#gameDisplay.fill(white)
+
+		button("continue",150,450,100,50,green,bright_green,unpause)
+		button("Quit",550,450,100,50,red,bright_red,quitgame)
+
+		pygame.display.update()
+		clock.tick(15)
+
 
 def game_intro():
 	intro = True
@@ -106,13 +154,6 @@ def game_intro():
 		button("Go!",150,450,100,50,green,bright_green,game_loop)
 		button("Quit",550,450,100,50,red,bright_red,quitgame)
 
-
-
-
-
-
-
-
 		pygame.display.update()
 		clock.tick(15)
 
@@ -120,6 +161,7 @@ def game_intro():
 
 
 def game_loop():
+	global pause 
 	x = (display_width * 0.41)
 	y = (display_height * 0.7)
 
@@ -146,8 +188,12 @@ def game_loop():
 	        if event.type == pygame.KEYDOWN:
 	        	if event.key == pygame.K_LEFT:
 	        		x_change = -3 
-	        	elif event.key == pygame.K_RIGHT:
+	        	if event.key == pygame.K_RIGHT:
 	        		x_change = 3
+	        	if event.key == pygame.K_ESCAPE:
+	        		pause = True
+	        		paused()
+
 	        if event.type == pygame.KEYUP:
 	        	if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
 	        		x_change = 0
